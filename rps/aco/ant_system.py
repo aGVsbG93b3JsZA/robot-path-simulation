@@ -1,4 +1,7 @@
 import random
+from typing import Generator
+
+from rps.gui import Point
 from .aco import ACO
 from ..gui import *
 
@@ -14,10 +17,10 @@ class AS(ACO):
         self, 
         m: int = 20,
         nc: int = 100,
-        Q: int = 300,
+        Q: float = 300,
         alpha: float = 1.0,
         beta: float = 0.2,
-        rho: float = 0.6,
+        rho: float = 0.5,
         t0: float = 10
         ):
         """
@@ -37,15 +40,14 @@ class AS(ACO):
         self.beta = beta
         self.rho = rho
         self.t0 = t0
+        self.k = 0
         # 每只蚂蚁的路径
         self.paths = [Path() for _ in range(self.m)]
-        # 每只蚂蚁的路径长度
-        self.lens = [0] * self.m 
         # 当前迭代次数            
         self.iter_cnt = 0
         # 当前最优路径
-        self.best_path = None
-        self.best_len = float('inf')
+        self.best_path = Path()
+        self.best_path.length = float('inf')
 
     def init_pher(self):
         self.t = {}
@@ -62,39 +64,41 @@ class AS(ACO):
         return self.t[r][s]**self.alpha * self.cal_H(r, s)**self.beta
 
     def cal_L(self, k:int):
-        return self.paths[k].length()
+        return self.paths[k].length
     
-    def state_trans(self, k:int, r:Point) -> Point|None:
-        # 下一步可到达的点
-        allowed = [s for s in self.edges[r] if s not in self.paths[k]]
-        # 若无可达点，返回为空
+    def allowed(self, r: Point) -> list[Point|None]:
+        options = []
+        for s in self.edges[r]:
+            if s not in self.paths[self.k]:
+                options.append(s)
+        return options
+
+    def state_trans(self, r:Point) -> Point | None:
+        allowed = self.allowed(r)
         if not allowed:
             return
-        # 根据概率函数返回一个点
         weights = list(map(lambda s: self.cal_P(r, s), allowed))
         return random.choices(allowed, weights=weights)[0]
 
     def tour(self, k:int):
-        # 清空相关变量
+        # 清空路径
         self.paths[k].clear()
-        self.lens[k] = 0
         # r表示当前点
-        r = self.graph.start
+        r = self.start
         self.paths[k].append(r)
-        while r != self.graph.end:
+        while r != self.end:
             # 获得下一个点s
-            if s:= self.state_trans(k, r):
+            if s:= self.state_trans(r):
                 self.paths[k].append(s)
                 r = s
             # 遇到死角回退一步
             else:
                 r = self.paths[k].pop()
         # 计算路径长度
-        self.lens[k] = self.cal_L(k)
+        length = self.cal_L(k)
         # 判断路径是否更短
-        if self.lens[k] <= self.best_len:
-            self.best_path = self.paths[k]
-            self.best_len = self.lens[k]
+        if length <= self.best_path.length:
+            self.best_path = self.paths[k].copy()
 
     def global_update(self):
         for r in self.t:
@@ -102,11 +106,10 @@ class AS(ACO):
                 self.t[r][s] *= self.rho
         for k in range(self.m):
             for r, s in self.paths[k].get():
-                self.t[r][s] += self.Q / self.lens[k]
+                self.t[r][s] += self.Q / self.paths[k].length
 
     def iteration(self):
-        for k in range(self.m):
-            self.tour(k)
-        self.global_update()
         self.iter_cnt += 1
-        
+        for self.k in range(self.m):
+            self.tour(self.k)
+        self.global_update()

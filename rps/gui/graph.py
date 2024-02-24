@@ -113,8 +113,8 @@ class Graph:
         self.edges.clear()
         for i in range(self.width):
             for j in range(self.length):
-                p1 = Point(i, j)
-                if p1 in self:
-                    self.edges[p1] = {p2: dist for p2, dist in self.neighbors(p1)}
+                r = Point(i, j)
+                if r in self:
+                    self.edges[r] = {s: dist for s, dist in self.neighbors(r)}
         return self.edges
 

@@ -108,21 +108,19 @@ class Map:
             self.ax.set_title(algorithm.__class__.__name__)
             for point in algorithm.search_real_time():
                 self.ax.plot(point.y, point.x, 'oy', markersize=350/max(self.graph.size))
-                plt.pause(0.01)
+                plt.pause(0.001)
             self._draw_path(algorithm.path)
         plt.show()   
         
     def _aco_real_time(self, algorithm):
         """蚁群算法动态显示"""
         with plt.ion():
-            count = 0
             for path in algorithm.search_real_time():
-                count += 1
                 self.ax.clear()
                 self._draw_map()
-                self.ax.set_title(algorithm.__class__.__name__ + f'    iteration:{count}')
+                self.ax.set_title(algorithm.__class__.__name__ + f'  iteration:{algorithm.iter_cnt}  len:{path.length:.2f}')
                 self._draw_path(path, color=0)
-                plt.pause(0.01)
+                plt.pause(0.001)
         plt.show() 
 
     def _aoto_color(func):
