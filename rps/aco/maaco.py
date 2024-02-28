@@ -61,12 +61,12 @@ class MAACO(AS):
         return random.choices(allowed, weights=weights)[0]
 
     def cal_H(self, r: Point, s: Point) -> float:
-        dsj = self.edges[r][s]
+        dsj = self.paths[self.k].length + self.edges[r][s]
         djt = s * self.end
         k = 1
         h = self.whmax - (self.whmax - self.whmin) * exp((-k * djt)/self.dst)
         g = 1 - h
-        ci = self.paths[k].length + 1 - (self.paths[self.k] > s)
+        ci = self.paths[self.k].turn_num + 1 - (self.paths[self.k] > s)
         return 1 / (g * dsj + h * djt + self.a * ci)
 
     def update_q0(self) -> None:

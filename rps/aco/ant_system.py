@@ -1,6 +1,4 @@
 import random
-from typing import Generator
-
 from rps.gui import Point
 from .aco import ACO
 from ..gui import *

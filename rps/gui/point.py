@@ -59,3 +59,23 @@ class Point:
 
     def __hash__(self):
         return hash((self.x, self.y))
+
+
+
+class LinkPoint:
+    """
+    基于双向链表结构表示的点
+    """
+    def __init__(self, point:Point=None) -> None:
+        self.point = point
+        self.next = None
+        self.front = None
+        self.length = None
+    
+    def __mul__(self, other):
+        if not self.point:
+            return 0
+        return self.point * other.point
+    
+    def __str__(self):
+        return f'{str(self.point)} -> {self.next}'
