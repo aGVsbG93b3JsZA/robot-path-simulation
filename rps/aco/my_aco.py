@@ -1,12 +1,10 @@
 from math import ceil
 import random
-
-from rps.gui import Point
 from .ant_system import AS
 from ..gui import *
 
 
-class LRACO(AS):
+class MyACO(AS):
     
     def __init__(
         self, 
@@ -39,8 +37,6 @@ class LRACO(AS):
         return self.t[r][s]**self.alpha
 
     def cal_elite_P(self, r:Point, s:Point, target:Point):
-        # if r in self.record_path and s in self.record_path:
-        #     k = 8
         return (1 / (self.edges[r][s] + s / target)) ** self.beta
 
     def get_start(self) -> Point:
@@ -90,7 +86,7 @@ class LRACO(AS):
                     self.paths[k].append(s)
                     r = s
                     # 下一点在最短路径上, 更新信息素
-                    if r in self.best_path:
+                    if r in self.record_path:
                         self.local_update(self.paths[k])
                         break
                 # 遇到死角回退一步
@@ -130,31 +126,7 @@ class LRACO(AS):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class MyACO(AS):
+class TEST_ACO(AS):
 
     def __init__(
         self, 
@@ -244,23 +216,6 @@ class MyACO(AS):
         if not self.start_end_stack:
             return True
         return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 class MyAS(AS):

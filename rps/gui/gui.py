@@ -109,7 +109,7 @@ class Map:
             for point in algorithm.search_real_time():
                 self.ax.plot(point.y, point.x, 'oy', markersize=350/max(self.graph.size))
                 plt.pause(0.001)
-            self._draw_path(algorithm.path)
+            self._draw_path(algorithm.path, color=3)
         plt.show()   
         
     def _aco_real_time(self, algorithm):
@@ -144,15 +144,15 @@ class Map:
     def _draw_map(self):
         """绘制初始地图"""
         # 画网格
-        for x in range(self.graph.width):
-            self.ax.plot((x-0.5, x-0.5), (-0.5, self.graph.length-0.5), 'k', lw=0.2)
-        for y in range(self.graph.length):
-            self.ax.plot((-0.5, self.graph.width-0.5), (y-0.5, y-0.5), 'k', lw=0.2)
+        for x in range(self.graph.length):
+            self.ax.plot((x-0.5, x-0.5), (-0.5, self.graph.width-0.5), 'k', lw=0.2)
+        for y in range(self.graph.width):
+            self.ax.plot((-0.5, self.graph.length-0.5), (y-0.5, y-0.5), 'k', lw=0.2)
         # 显示地图
         self.ax.imshow(self.graph.graph, cmap='Greys', origin='lower')
         # 设置刻度
-        self.ax.set_xticks(np.arange(0, self.graph.width+1, self.graph.width//20))
-        self.ax.set_yticks(np.arange(0, self.graph.length+1, self.graph.width//20))
+        self.ax.set_xticks(np.arange(0, self.graph.length+1, self.graph.length//20))
+        self.ax.set_yticks(np.arange(0, self.graph.width+1, self.graph.width//20))
         # 放置起始点
         self.ax.plot(self.graph.start.y, self.graph.start.x, 'og', markersize=400/max(self.graph.size))
         self.ax.plot(self.graph.end.y, self.graph.end.x, 'Xr', markersize=400/max(self.graph.size))

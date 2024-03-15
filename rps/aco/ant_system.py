@@ -1,5 +1,4 @@
 import random
-from rps.gui import Point
 from .aco import ACO
 from ..gui import *
 
@@ -41,6 +40,8 @@ class AS(ACO):
         self.k = 0
         # 每只蚂蚁的路径
         self.paths = [Path() for _ in range(self.m)]
+        # 当前蚂蚁的路径
+        self.path: Path = None
         # 当前迭代次数            
         self.iter_cnt = 0
         # 当前最优路径
@@ -60,9 +61,6 @@ class AS(ACO):
 
     def cal_P(self, r:Point, s:Point) -> float:
         return self.t[r][s]**self.alpha * self.cal_H(r, s)**self.beta
-
-    def cal_L(self, k:int):
-        return self.paths[k].length
     
     def allowed(self, r: Point) -> list[Point|None]:
         options = []
@@ -79,24 +77,32 @@ class AS(ACO):
         return random.choices(allowed, weights=weights)[0]
 
     def tour(self, k:int):
+        # 当前路径
+        self.path = self.paths[k]
         # 清空路径
-        self.paths[k].clear()
+        self.path.clear()
         # r表示当前点
         r = self.start
-        self.paths[k].append(r)
+        self.path.append(r)
         while r != self.end:
             # 获得下一个点s
             if s:= self.state_trans(r):
-                self.paths[k].append(s)
+                self.path.append(s)
                 r = s
-            # 遇到死角回退一步
+            # 遇到死角, 提前结束
             else:
-                r = self.paths[k].pop()
-        # 计算路径长度
-        length = self.cal_L(k)
-        # 判断路径是否更短
-        if length <= self.best_path.length:
-            self.best_path = self.paths[k].copy()
+                # print(self.iter_cnt, self.k)
+                self.path.clear()
+                return
+        # 路径长度
+        length = self.path.length
+        # 路径拐点数
+        turn_num = self.path.turn_num
+        # 判断路径是否更优
+        if length < self.best_path.length:
+            self.best_path = self.path.copy()
+        elif length == self.best_path.length and turn_num < self.best_path.turn_num:
+            self.best_path = self.path.copy()
 
     def global_update(self):
         for r in self.t:

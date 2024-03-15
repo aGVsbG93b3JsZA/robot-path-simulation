@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import time
 import os
 
-def make_map(width:int=20, length:int=20, name:str=None, dir:str=None):
+def make_map(length:int=20, width:int=20, name:str=None, dir:str=None):
     """
     手动制作一张地图
 
@@ -22,27 +22,27 @@ def make_map(width:int=20, length:int=20, name:str=None, dir:str=None):
     fig, ax = plt.subplots(figsize=(10,7))
 
     # 初始化
-    graph = np.zeros((length, width))
+    graph = np.zeros((width, length))
     graph[width//2][length//2] = 1
 
     # 画网格
-    for x in range(width):
-        ax.plot((x-0.5, x-0.5), (-0.5, length-0.5), 'k', lw=0.2)
-    for y in range(length):
-        ax.plot((-0.5, width-0.5), (y-0.5, y-0.5), 'k', lw=0.2)
+    for x in range(length):
+        ax.plot((x-0.5, x-0.5), (-0.5, width-0.5), 'k', lw=0.2)
+    for y in range(width):
+        ax.plot((-0.5, length-0.5), (y-0.5, y-0.5), 'k', lw=0.2)
 
     # x轴和y轴刻度
-    ax.set_xticks(np.arange(0, width+1, width//20))
-    ax.set_yticks(np.arange(0, length+1, width//20))
+    ax.set_xticks(np.arange(0, length+1, length//20))
+    ax.set_yticks(np.arange(0, width+1, width//20))
 
     # 显示地图
     im = ax.imshow(graph, cmap='Greys', origin='lower')
 
     # 点击地图刷新
     def onclick(event):
-        x = round(event.xdata)
-        y = round(event.ydata)
-        graph[y][x] = 1 - graph[y][x]
+        x = round(event.ydata)
+        y = round(event.xdata)
+        graph[x][y] = 1 - graph[x][y]
         im.set_data(graph)
         fig.canvas.draw()
         fig.canvas.flush_events()

@@ -40,7 +40,7 @@ class MAACO(AS):
     def allowed(self, r: Point) -> list[Point | None]:
         options = []
         for s in self.edges[r]:
-            if s not in self.paths[self.k]:
+            if s not in self.path:
                 options.append(s)
         if len(options) <= 3:
             return options
@@ -61,12 +61,12 @@ class MAACO(AS):
         return random.choices(allowed, weights=weights)[0]
 
     def cal_H(self, r: Point, s: Point) -> float:
-        dsj = self.paths[self.k].length + self.edges[r][s]
+        dsj = self.path.length + self.edges[r][s]
         djt = s * self.end
         k = 1
         h = self.whmax - (self.whmax - self.whmin) * exp((-k * djt)/self.dst)
         g = 1 - h
-        ci = self.paths[self.k].turn_num + 1 - (self.paths[self.k] > s)
+        ci = self.path.turn_num + 1 - (self.path > s)
         return 1 / (g * dsj + h * djt + self.a * ci)
 
     def update_q0(self) -> None:

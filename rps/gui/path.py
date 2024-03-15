@@ -5,10 +5,14 @@ class Path:
     表示一条路径 (基于列表和集合存储)
 
     属性:
+        valid (bool): 路径是否有效
         length (float): 路径长度 
         turn_num (int): 路径拐角数
 
     """
+
+    valid = True
+
     def __init__(self, path:list=None):
         if path is None:
             self.path = []

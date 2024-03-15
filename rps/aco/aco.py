@@ -29,10 +29,8 @@ class ACO:
         s: Point            # 下一点
 
         paths: list[Path]   # 所有蚂蚁的路径
-        lens: list[float]   # 所有蚂蚁的路径长度
         iter_cnt: int       # 当前的迭代次数
         best_path: Path     # 当前为止的最佳路径
-        best_len: float     # 当前最佳路径的距离
         graph: Graph        # 地图数据
         edges: dict         # 包含所有边及长度
     """
@@ -60,7 +58,7 @@ class ACO:
             yield self.best_path
     
     def init_pher(self) -> None:
-        """设置初始信息素"""
+        """设置初始信息素及其他参数"""
     
     def tour(self, k:int) -> None:
         """第k只蚂蚁寻找一次路径"""

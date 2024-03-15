@@ -1,4 +1,3 @@
-
 class Dir:
     """
     表示一个方向向量
@@ -13,7 +12,7 @@ class Dir:
         Dir(-1, 0)      # x轴负方向
         Dir(-1, -1)     # 直线 y = x (x < 0)
         Dir(0, -1)      # y轴负方向
-
+    
     """
 
     def __init__(self, x:int, y:int):
@@ -25,6 +24,15 @@ class Dir:
 
     def __eq__(self, other) -> bool:
         return self.x == other.x and self.y == other.y
+    
+    def __sub__(self, other) -> bool:
+        dis = abs(other.x - self.x) + abs(other.y - self.y)
+        if dis == 0:
+            return 5
+        elif dis == 1:
+            return 2
+        else:
+            return 1
 
     def left(self):
         """将方向逆时针旋转45度"""
@@ -37,3 +45,16 @@ class Dir:
         x = self.x + (self.x==0 or self.x==-self.y) * self.y
         y = self.y + (self.y==0 or self.x==self.y) * -self.x
         return Dir(x, y)
+    
+    def towards_points(self, r):
+        """根据当前点r, 和当前方向, 生成三个接近方向的下一点"""
+        yield r + self
+        yield r + self.left()
+        yield r + self.right()
+
+    @classmethod
+    def all_dirs(cls):
+        for x in range(-1, 2):
+            for y in range(-1, 2):
+                if x or y:
+                    yield cls(x, y)
